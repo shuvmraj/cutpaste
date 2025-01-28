@@ -4,6 +4,52 @@ import { ref, set, onValue, off } from 'firebase/database';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './components/Hero';
+import Content from './components/Content';
+import { Link, BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Guide from './components/Guide';
+import { HelpCircle } from 'lucide-react';
+
+// Create a new MainPage component to hold the main page content
+const MainPage = ({ 
+  text, 
+  setText, 
+  code, 
+  inputCode, 
+  setInputCode, 
+  receivedText, 
+  showTextArea, 
+  setShowTextArea, 
+  handleTextChange 
+}) => {
+  return (
+    <>
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex flex-col lg:flex-row lg:space-x-12">
+          <Hero />
+          <Content
+            text={text}
+            setText={setText}
+            code={code}
+            inputCode={inputCode}
+            setInputCode={setInputCode}
+            receivedText={receivedText}
+            setShowTextArea={setShowTextArea}
+            showTextArea={showTextArea}
+            handleTextChange={handleTextChange}
+          />
+        </div>
+        <div className="text-center mt-24 flex items-center justify-center space-x-2">
+            <HelpCircle className="text-blue-400 w-6 h-6" /> {/* Add the icon */}
+            <Link to="/guide" className="text-blue-400 underline">
+              How to Use CutPaste
+            </Link>
+          </div>
+      </main>
+      <Footer />
+    </>
+  );
+};
 
 const App = () => {
   const [text, setText] = useState('');
@@ -39,75 +85,31 @@ const App = () => {
   }, [inputCode]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <Header />
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row lg:space-x-12">
-          {/* Left side - Informative text */}
-          <Hero />
-          {/* Right side - Interactive elements */}
-          <div className="lg:w-1/2 mt-8 lg:mt-0 flex items-start justify-center">
-            <div className="bg-blue-500/5 p-6 rounded-lg w-96">
-              {!showTextArea ? (
-                <>
-                  <div className="mb-6">
-                    <h2 className="text-blue-400 mb-2">Enter sharing code:</h2>
-                    <input
-                      type="text"
-                      maxLength={4}
-                      value={inputCode}
-                      onChange={(e) => setInputCode(e.target.value)}
-                      placeholder="Enter 4-digit code"
-                      className="w-full px-4 py-3 bg-transparent border border-blue-500/30 rounded-lg
-                               text-center font-mono text-xl text-white placeholder-blue-300/50
-                               focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20
-                               focus:outline-none"
-                    />
-                  </div>
-                  {inputCode.length !== 4 && (
-                    <button
-                      onClick={() => setShowTextArea(true)}
-                      className="w-full px-8 py-4 text-xl text-purple-400 border border-purple-400 rounded-lg
-                               hover:bg-purple-400/10 transition-all duration-300 ease-in-out"
-                    >
-                      Type & Share Now!
-                    </button>
-                  )}
-                </>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-gray-400">
-                    Your sharing code:
-                    <span className="ml-2 font-mono text-xl text-blue-400 font-semibold">{code}</span>
-                  </p>
-                  <textarea
-                    value={text}
-                    onChange={handleTextChange}
-                    placeholder="Type your text here..."
-                    className="w-full h-36 px-4 py-2 bg-transparent border border-blue-500/30 rounded-lg
-                             text-white placeholder-gray-400 focus:border-purple-500
-                             focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
-                  />
-                </div>
-              )}
-
-              {receivedText && (
-                <div className="mt-6 space-y-2">
-                  <h3 className="text-blue-400 text-lg">Received Text:</h3>
-                  <pre className="w-full bg-blue-500/5 p-4 rounded-lg text-gray-400 whitespace-pre-wrap
-                                border border-blue-500/30 font-sans">
-                    {receivedText}
-                  </pre>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
+    <Router>
+      <div className="min-h-screen bg-black text-white">
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <MainPage
+                text={text}
+                setText={setText}
+                code={code}
+                inputCode={inputCode}
+                setInputCode={setInputCode}
+                receivedText={receivedText}
+                showTextArea={showTextArea}
+                setShowTextArea={setShowTextArea}
+                handleTextChange={handleTextChange}
+              />
+            } 
+          />
+          <Route path="/guide" element={<Guide />} />
+          {/* Redirect any unknown paths to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
