@@ -39,7 +39,7 @@ const MainPage = ({
             handleTextChange={handleTextChange}
           />
         </div>
-        <div className="text-center mt-24 flex items-center justify-center space-x-2">
+        <div className="text-center mt-8 flex items-center justify-center space-x-2">
             <HelpCircle className="text-blue-400 w-6 h-6" /> {/* Add the icon */}
             <Link to="/guide" className="text-blue-400 underline">
               How to Use CutPaste
@@ -85,7 +85,6 @@ const App = () => {
   }, [inputCode]);
 
   return (
-    <Router>
       <div className="min-h-screen bg-black text-white">
         <Routes>
           <Route 
@@ -109,7 +108,6 @@ const App = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
-    </Router>
   );
 };
 
