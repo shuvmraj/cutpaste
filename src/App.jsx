@@ -1,26 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { database } from './services/firebase';
-import { ref, set, onValue, off } from 'firebase/database';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Hero from './components/Hero';
-import Content from './components/Content';
-import { Link, BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Guide from './components/Guide';
-import { HelpCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { database } from "./services/firebase";
+import { ref, set, onValue, off } from "firebase/database";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Hero from "./components/Hero";
+import Content from "./components/Content";
+import { Link, BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Guide from "./components/Guide";
+import { HelpCircle } from "lucide-react";
+import Preloader from "./components/Preloader";
 
-// Create a new MainPage component to hold the main page content
-const MainPage = ({ 
-  text, 
-  setText, 
-  code, 
-  inputCode, 
-  setInputCode, 
-  receivedText, 
-  showTextArea, 
-  setShowTextArea, 
-  handleTextChange 
-}) => {
+const MainPage = ({ text, setText, code, inputCode, setInputCode, receivedText, showTextArea, setShowTextArea, handleTextChange }) => {
   return (
     <>
       <Header />
@@ -40,11 +30,11 @@ const MainPage = ({
           />
         </div>
         <div className="text-center mt-8 flex items-center justify-center space-x-2">
-            <HelpCircle className="text-blue-400 w-6 h-6" /> {/* Add the icon */}
-            <Link to="/guide" className="text-blue-400 underline">
-              How to Use CutPaste
-            </Link>
-          </div>
+          <HelpCircle className="text-blue-400 w-6 h-6" />
+          <Link to="/guide" className="text-blue-400 underline">
+            How to Use CutPaste
+          </Link>
+        </div>
       </main>
       <Footer />
     </>
@@ -52,11 +42,12 @@ const MainPage = ({
 };
 
 const App = () => {
-  const [text, setText] = useState('');
-  const [code, setCode] = useState('');
-  const [inputCode, setInputCode] = useState('');
-  const [receivedText, setReceivedText] = useState('');
+  const [text, setText] = useState("");
+  const [code, setCode] = useState("");
+  const [inputCode, setInputCode] = useState("");
+  const [receivedText, setReceivedText] = useState("");
   const [showTextArea, setShowTextArea] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const newCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -85,7 +76,10 @@ const App = () => {
   }, [inputCode]);
 
   return (
-      <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white">
+      {isLoading ? (
+        <Preloader setIsLoading={setIsLoading} />
+      ) : (
         <Routes>
           <Route 
             path="/" 
@@ -104,10 +98,10 @@ const App = () => {
             } 
           />
           <Route path="/guide" element={<Guide />} />
-          {/* Redirect any unknown paths to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </div>
+      )}
+    </div>
   );
 };
 
