@@ -24,7 +24,7 @@ function SocialLink() {
           </a>
           {/* Website */}
           <a 
-            href="https://shuvmraj.netlify.app/" 
+            href="https://shuvm.me/" 
             target="_blank" 
             rel="noopener noreferrer"
             aria-label="Website"
