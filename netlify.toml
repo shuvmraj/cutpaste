@@ -1,0 +1,5 @@
+# Catch-all redirect to handle random routes
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
