@@ -13,7 +13,7 @@ const Content = ({
 }) => {
   return (
     <div className="lg:w-1/2 mt-16 lg:mt-0 flex items-start justify-center">
-      <div className="bg-blue-500/5 p-6 rounded-lg w-96">
+      <div className="bg-black p-6 rounded-lg w-96">
         {/* Conditionally render based on showTextArea */}
         {!showTextArea ? (
           <>
