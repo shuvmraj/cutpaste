@@ -16,7 +16,7 @@ const Preloader = ({ setIsLoading }) => {
         initial={{ scale: 1 }}
         animate={{ scale: 1.5 }}
         transition={{ duration: 2, ease: "easeInOut" }}
-        className="flex items-center space-x-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 text-5xl font-bold"
+        className="flex items-center space-x-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500 text-5xl font-bold"
       >
         <span>CutPaste</span>
         <Scissors className="text-blue-500 rotate-330 w-10 h-10" />
