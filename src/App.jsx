@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { database } from "./services/firebase";
-import { ref, set, onValue, off } from "firebase/database";
+import { updateText, getText } from "./services/api";
+// Remove the MongoDB import
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Hero from "./components/Hero";
@@ -13,6 +13,7 @@ import Preloader from "./components/Preloader";
 const MainPage = ({ text, setText, code, inputCode, setInputCode, receivedText, showTextArea, setShowTextArea, handleTextChange }) => {
   return (
     <>
+    
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row lg:space-x-12">
@@ -54,25 +55,44 @@ const App = () => {
     setCode(newCode);
   }, []);
 
-  const handleTextChange = (e) => {
+  const handleTextChange = async (e) => {
     const newText = e.target.value;
     setText(newText);
     if (code) {
-      set(ref(database, `texts/${code}`), { text: newText });
+      try {
+        await updateText(code, newText);
+      } catch (error) {
+        console.error("Error updating text:", error);
+      }
     }
   };
 
   useEffect(() => {
-    if (inputCode.length === 4) {
-      const textRef = ref(database, `texts/${inputCode}`);
-      onValue(textRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          setReceivedText(data.text);
+    let intervalId;
+
+    const fetchText = async () => {
+      if (inputCode.length === 4) {
+        try {
+          const data = await getText(inputCode);
+          if (data && data.text !== undefined) {
+            setReceivedText(data.text);
+          }
+        } catch (error) {
+          console.error("Error fetching text:", error);
         }
-      });
-      return () => off(textRef);
+      }
+    };
+
+    if (inputCode.length === 4) {
+      fetchText();
+      intervalId = setInterval(fetchText, 1000);
     }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [inputCode]);
 
   return (
