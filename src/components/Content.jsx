@@ -10,6 +10,7 @@ const Content = ({
   setShowTextArea,
   showTextArea,
   handleTextChange,
+  handleSubmit, // Add this prop
 }) => {
   return (
     <div className="lg:w-1/2 mt-16 lg:mt-0 flex items-start justify-center">
@@ -67,14 +68,21 @@ const Content = ({
               Your sharing code:
               <span className="ml-2 font-mono text-xl text-blue-400 font-semibold">{code}</span>
             </p>
-            <textarea
-              value={text}
-              onChange={handleTextChange}
-              placeholder="Type your text here..."
-              className="w-full h-36 px-4 py-2 bg-transparent border border-blue-500/30 rounded-lg
-                       text-white placeholder-gray-400 focus:border-purple-500
-                       focus:ring-2 focus:ring-purple-500/20 focus:outline-none"
-            />
+            
+            <div className="mt-4">
+              <textarea
+                value={text}
+                onChange={handleTextChange}
+                className="w-full h-40 p-2 bg-gray-800 text-white border border-gray-700 rounded"
+                placeholder="Type your text here..."
+              />
+              <button 
+                onClick={handleSubmit}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         )}
       </div>

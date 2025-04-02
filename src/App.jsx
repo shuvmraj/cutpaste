@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { updateText, getText } from "./services/api";
+import { updateText, getText, joinRoom, subscribeToTextUpdates } from "./services/api";
 // Remove the MongoDB import
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -50,14 +50,19 @@ const App = () => {
   const [showTextArea, setShowTextArea] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const newCode = Math.floor(1000 + Math.random() * 9000).toString();
-    setCode(newCode);
-  }, []);
+  // Remove the initial code generation useEffect
 
   const handleTextChange = async (e) => {
     const newText = e.target.value;
     setText(newText);
+    
+    // Generate code only when text is entered and no code exists
+    if (newText && !code) {
+      const newCode = Math.floor(1000 + Math.random() * 9000).toString();
+      setCode(newCode);
+    }
+
+    // Update text in database if code exists
     if (code) {
       try {
         await updateText(code, newText);
@@ -67,8 +72,11 @@ const App = () => {
     }
   };
 
+  // In your App component, modify the inputCode useEffect:
+  
   useEffect(() => {
     let intervalId;
+    let unsubscribe;
 
     const fetchText = async () => {
       if (inputCode.length === 4) {
@@ -76,6 +84,7 @@ const App = () => {
           const data = await getText(inputCode);
           if (data && data.text !== undefined) {
             setReceivedText(data.text);
+            setShowTextArea(false); // Show received text instead of input
           }
         } catch (error) {
           console.error("Error fetching text:", error);
@@ -85,15 +94,38 @@ const App = () => {
 
     if (inputCode.length === 4) {
       fetchText();
-      intervalId = setInterval(fetchText, 1000);
+      
+      // Join the socket room for this code
+      joinRoom(inputCode);
+      
+      // Subscribe to real-time updates
+      unsubscribe = subscribeToTextUpdates((data) => {
+        if (data.code === inputCode) {
+          setReceivedText(data.text);
+        }
+      });
     }
 
     return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
+      if (unsubscribe) {
+        unsubscribe();
       }
     };
   }, [inputCode]);
+  
+  // Add a submit function
+  // Add the handleSubmit function to App.jsx
+  const handleSubmit = async () => {
+    if (text && code) {
+      try {
+        await updateText(code, text);
+        alert(`Text saved with code: ${code}`);
+        // Optionally reset the form or navigate elsewhere
+      } catch (error) {
+        console.error("Error submitting text:", error);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -114,6 +146,7 @@ const App = () => {
                 showTextArea={showTextArea}
                 setShowTextArea={setShowTextArea}
                 handleTextChange={handleTextChange}
+                handleSubmit={handleSubmit} // Add this prop
               />
             } 
           />
