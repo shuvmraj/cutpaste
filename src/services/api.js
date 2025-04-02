@@ -1,8 +1,8 @@
-import { API_URL } from '../config';
+import { API_URL, SOCKET_URL } from '../config';
 import { io } from 'socket.io-client';
 
-// Create socket connection
-const socket = io('http://localhost:3001');
+// Create socket connection using the environment-specific URL
+const socket = io(SOCKET_URL);
 
 export const updateText = async (code, text) => {
   try {
